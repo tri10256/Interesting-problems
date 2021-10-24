@@ -1,0 +1,57 @@
+#define mp make_pair
+#define pb push_back
+#define N 111111
+
+vector<int>adj[N];
+pair<int,int>ans;
+
+void dfs(int v,int p=-1,int d=0)
+{
+    ///cout<<"distance"<<" "<<d;
+    if(d>ans.first)
+    {
+        ans=mp(d,v);
+    }
+    for(int i=0;i<adj[v].size();i++)
+    {
+        int to=adj[v][i];
+        if(to!=p)
+        {
+            dfs(to,v,d+1);
+        }
+    }
+    
+}
+
+
+
+int Solution::solve(vector<int> &A) {
+    int n=A.size();
+    for(int i=0;i<n;i++)
+    {
+        adj[i].clear();
+    }
+    
+    for(int i=0;i<n;i++)
+    {
+        int x=A[i];
+        if(x!=-1)
+        {
+            assert(x!=i);
+            adj[x].pb(i);
+            adj[i].pb(x);
+            
+        }
+    }
+    
+    int v=0;
+    ans=mp(-1,-1);  // pair's first is distance and pairs second is vertex
+    dfs(v);
+    v=ans.second;
+    ans=mp(-1,-1);
+    dfs(v);
+    return ans.first;
+    
+    
+    
+}
