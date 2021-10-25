@@ -31,9 +31,10 @@ int Solution::solve(int A, vector<vector<int> > &B) {
         if(vis[i])
         continue;
         stack[i]=true;
-        if(dfs(i,adj,vis,stack))
-        return 1;
+        bool ch=dfs(v,adj,vis,st);
         stack[i]=false;
+        if(ch)
+        return true;
     }
     return false;
     
