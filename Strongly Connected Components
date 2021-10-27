@@ -1,0 +1,70 @@
+// Can be solved by the use  of topological sort dfs algorithm( but technically it is reverse postorder).
+// Problem:- Return a Matrix of sorted strongly components in a graph
+// Step1. : Take the reverse post order and store that reverse post order in any vector say revpo.
+// Step2. : Reverse all the edges of the graph (form adj in just reverse as formed adjacency to find reverse postorder).
+// Step 3:  : Run the Reverse post order dfs for every node present in revpo and store the reverse post order for every node in a vector temp. and push it 
+//  into the matrix and return it.
+
+
+
+void dfs(int u,vector<int>adj[],int visited[],stack<int>&st){
+    if(visited[u])
+    return;
+    visited[u]=true;
+    for(auto it:adj[u]){
+        dfs(it,adj,visited,st);
+    }
+    st.push(u);
+}
+
+
+vector<vector<int>>Solution::solve(int A, vector<vector<int> > &B) {
+
+         vector<int>adj[A+1];
+         for(int i=0;i<B.size();i++){
+             adj[B[i][0]].push_back(B[i][1]);
+         }
+         stack<int>st;
+         int visited[A+1]={0};
+
+         for(int i=1;i<=A;i++){
+             if(visited[i])
+             continue;
+             dfs(i,adj,visited,st);
+         }
+         
+         vector<int>revpo;
+         
+        while(!st.empty()){
+            revpo.push_back(st.top());
+            st.pop();
+        }
+        
+        vector<int>revedges[A+1];
+
+        for(int i=0;i<B.size();i++){
+            revedges[B[i][1]].push_back(B[i][0]);
+        }
+        
+        int visited2[A+1]={0};
+        vector<vector<int>>ans;
+        for(int i=0;i<revpo.size();i++){
+            if(visited2[revpo[i]])
+            continue;
+            stack<int>stc;
+            dfs(revpo[i],revedges,visited2,stc);
+            vector<int>temp;
+            while(!stc.empty()){
+                temp.push_back(stc.top());
+                stc.pop();
+            }
+            sort(temp.begin(),temp.end());
+            ans.push_back(temp);
+        }
+
+
+
+       return ans;
+
+
+}
