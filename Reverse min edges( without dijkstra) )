@@ -1,0 +1,62 @@
+// Reverse min edges in the graph without using dijkstra's Algorithm, so that there should be atleast 1 path from the starting node to the destination node. Graph can have
+// self loops.
+
+const int N=400005;
+vector<pair<int,int>>adj[N];
+int dis[N];
+
+void clean(int n){
+    for(int i=0;i<n;i++){
+    adj[i].clear();
+    dis[i]=INT_MAX;
+    }
+}
+
+
+void make_graph(vector<vector<int>>&path){
+    for(auto it:path){
+        adj[it[0]].push_back({it[1],0});
+        adj[it[1]].push_back({it[0],1});
+    }
+}
+
+
+int Solution::reverseEdges(int A, vector<vector<int>>&B){
+
+    int n=B.size();
+    clean(2*n);
+
+    make_graph(B);
+
+    deque<int>dq;
+    dq.push_back(1);
+    dis[1]=0;
+
+    while(!dq.empty()){
+
+        int u=dq.front();
+          dq.pop_front();
+    
+        for(auto v:adj[u]){
+            
+           int z=v.first;
+           int zw=v.second;
+
+           if(dis[z]>dis[u]+zw){
+
+               dis[z]=dis[u]+zw;
+
+               if(zw==0)
+                   dq.push_front(z);
+               else
+               dq.push_back(z);
+
+            } 
+        } 
+    }
+
+  if(dis[A]==INT_MAX)
+    return -1;
+  else
+    return dis[A];
+}
