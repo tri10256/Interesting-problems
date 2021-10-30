@@ -1,0 +1,122 @@
+/*Problem.
+Given an array of strings A of size N, find if the given strings can be chained to form a circle.
+
+A string X can be put before another string Y in circle if the last character of X is same as first character of Y.
+
+NOTE: All strings consist of lower case characters.
+
+
+
+Problem Constraints
+1 <= N <= 105
+
+Sum of length of all strings <= 106
+
+
+
+Input Format
+First and only argument is a string array A of size N.
+
+
+
+Output Format
+Return an integer 1 if it is possible to chain the strings to form a circle else return 0.
+
+
+
+Example Input
+Input 1:
+
+ A = ["aab", "bac", "aaa", "cda"]
+Input 2:
+
+ A = ["abc", "cbc"]
+
+
+Example Output
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+Explanation 1:
+
+ We can chain the strings aab -> bac -> cda -> aaa -> aab. So this forms a circle. So, output will be 1. 
+Explanation 2:
+
+ There is no way to chain the given strings such that they forms a circle. 
+ */
+ 
+ 
+  My - Approach:-
+ 
+Make a Adjacency table of 26 characters as , only small characters are needed to be considered. for each string we have to work on first and last character so, if we need to 
+find that they can make loop then, 1). first we have to check, are the indegree and outdegree of the first and last character in strings are same or not , because if the first of one
+is to be same as the last of other or vice versa then they should have same indegree as well as outdegree. 
+if they have not same indegree and outdegree then you can return false at this point as they will never complete a loop .
+
+2. If we have already checked that they have same indegree and outdegree . Then we need only to check that are they connected to each other or, not is it possible to move from,
+any one of them to all , so we will call a bfs from a single vertex, and if in that single call we are able to visited every vertex then that means we can visit each other. 
+This means that they are STRONGLY CONNECTED . To each other. 
+
+code:-
+ 
+ 
+void dfs(vector<int>adj[],vector<int>&visited,int u){
+    visited[u]=1;
+    for(auto it:adj[u]){
+        if(!visited[it]){
+            dfs(adj,visited,it);
+        }
+    }
+}
+
+
+bool isconnected(vector<int>adj[], vector<bool>&mark,int s){
+    vector<int>visited(26,0);
+
+     dfs(adj,visited,s);
+
+     for(int i=0;i<26;i++){
+         if(mark[i] && !visited[i])
+         return false;
+     }
+     return true;
+
+}
+
+int Solution::solve(vector<string> &A) {
+
+  int n=A.size();
+
+  vector<int>adj[26];
+  vector<bool>mark(26,0); // just marking that this is first or last and is in string
+  vector<int>indegree(26,0);
+  vector<int>outdegree(26,0);
+
+  for(int i=0;i<n;i++){
+
+      int f=A[i].front()-'a';
+      int l=A[i].back()-'a';
+      mark[f]=mark[l]=true;
+      indegree[l]++;
+      outdegree[f]++;
+      adj[f].push_back(l);
+  }
+
+  for(int i=0;i<26;i++){
+
+      if(indegree[i]!=outdegree[i])
+      return false;
+
+   return isconnected(adj,mark,A[0].front()-'a');
+
+  }
+ return 0;
+}
+
+ 
