@@ -1,0 +1,73 @@
+class Node{
+    public:
+    Node* links[26] = {};
+    bool isWord = false;
+    bool contains(char &c) {return links[c - 'a']!=NULL;}
+    void put(char &c, Node* node) {links[c - 'a'] = node;}
+    Node* next(char &c) {return links[c - 'a'];}
+};
+
+class Trie {
+public:
+    Node* root;
+    Trie() {
+        root = new Node();
+    }
+    
+    void insert(string word) {
+        Node* node = root;
+        for(auto ch:word){
+            if(!node->contains(ch)){
+                node->put(ch,new Node());
+            }
+            node = node->next(ch);
+        }
+        node->isWord = true;
+    }
+    
+    bool search(string word) {
+        Node* node = root;
+        for(auto ch:word){
+            if(!node->contains(ch)){
+                return false;
+            }
+            node = node->next(ch);
+        }
+        
+        if(node->isWord){
+            return true;
+        }
+        
+        bool haveNode = false;
+        if(node){
+            for(int i = 0;i<26;i++){
+                if(node->links[i]!=NULL){
+                    haveNode = true;
+                    break;
+                }
+            }
+        }
+    
+        return !haveNode;
+    }
+    
+    bool startsWith(string prefix) {
+        Node* node = root;
+        for(auto ch:prefix){
+            if(!node->contains(ch)){
+                return false;
+            }
+            node = node->next(ch);
+        }
+        
+        return true;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
