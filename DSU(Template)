@@ -1,0 +1,84 @@
+class Solution {
+public:
+    class DSU{
+        vector<int>rank;
+        vector<int>ultiParent;
+
+        public:
+        DSU(){
+
+        }
+        DSU(int n){
+            rank.reserve(n+2);
+            ultiParent.reserve(n+2);
+        }
+        void set(int n){
+            rank.resize(n+2,0);
+            ultiParent.resize(n+2,0);
+
+            for(int i =1;i<=n;i++){
+                ultiParent[i] = i;
+                rank[i] = 0;
+            }
+        }
+
+        int findUltiPar(int u){
+            if(u == ultiParent[u]){
+                return u;
+            }
+
+            return ultiParent[u] = findUltiPar(ultiParent[u]);
+        }
+
+        void merge(int u, int v){
+             int par_u = findUltiPar(u);
+             int par_v = findUltiPar(v);
+
+             if(par_u != par_v){
+                if(rank[par_u] < rank[par_v]){
+                    ultiParent[par_u] = par_v;
+                }else if(rank[par_v] < rank[par_u]){
+                    ultiParent[par_v] = par_u;
+                }else{
+                    ultiParent[par_v] = par_u;
+                    rank[par_u]++;
+                }
+             }
+        }
+        
+        void print(){
+            int n = rank.size();
+            for(int i = 0;i<n;i++){
+                cout<<rank[i]<<" ";
+            }
+            cout<<endl;
+            for(int i = 0;i<n;i++){
+                cout<<ultiParent[i]<<" ";
+            }
+        }
+
+    };
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        vector<int>ans;
+        int n = edges.size();
+        DSU st;
+        st.set(n);
+        st.print();
+
+
+        for(auto edge:edges){
+            int par1 = st.findUltiPar(edge[0]);
+            int par2 = st.findUltiPar(edge[1]);
+
+            if(par1 != par2){
+                st.merge(edge[0],edge[1]);
+            }else{
+                ans.push_back(edge[0]);
+                ans.push_back(edge[1]);
+                break;
+            }
+        }
+      
+       return ans;
+    }
+};
